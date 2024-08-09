@@ -12,7 +12,26 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+FetchContent_Declare(
+        cxxopts
+        GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+        GIT_TAG v2.2.1
+)
 
-add_executable(motivatio main.cpp)
+FetchContent_GetProperties(cxxopts)
+if(NOT cxxopts_POPULATED)
+    FetchContent_Populate(cxxopts)
+    add_subdirectory(${cxxopts_SOURCE_DIR} ${cxxopts_BINARY_DIR})
+endif()
+
+
+add_executable(motivatio main.cpp
+        src/parser.cpp
+        src/include/parser.h
+        src/include/quotes.h
+        src/quotes.cpp
+        src/include/quote.h)
+
+target_include_directories(motivatio PRIVATE ${cxxopts_SOURCE_DIR}/include)
 
 target_link_libraries(motivatio nlohmann_json::nlohmann_json)
