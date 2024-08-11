@@ -1,7 +1,5 @@
 #include "include/quotes.h"
-
 #include <random>
-#include <nlohmann/json.hpp>
 
 /**
  * @brief Constructor for the Quotes class.
@@ -15,12 +13,7 @@
  *       If the file is empty or does not have a "data" field, the quotes vector will remain empty.
  */
 Quotes::Quotes() {
-    nlohmann::json result = Parser::ParseFile("../data.json");
-    if (!result.empty() && result.contains("data")) {
-        for (auto &entry: result["data"]) {
-            quotes.push_back(Quote(entry["quote"], entry["author"]));
-        }
-    }
+    quotes = parser.ParseFilesAtDirectory(RESOURCE_INSTALL_PATH + std::string("/quotes"));
 }
 
 

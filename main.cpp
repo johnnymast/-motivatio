@@ -1,45 +1,49 @@
+#define SPACE " "
+
 #include <iostream>
+#include <string>
 #include <cxxopts.hpp>
+#include <termcolor/termcolor.hpp>
+#include <iomanip>
 
 #include "src/include/quotes.h"
 #include "src/include/quote.h"
+#include "src/include/cli.h"
+#include "src/include/styles.h"
 
-int main(int argc, char* argv[]) {
 
-    // cxxopts::Options options(argv[0], "A brief description of what the program does");
-    //
-    // options.add_options()
-    //   ("n,name", "Name of the user", cxxopts::value<std::string>())
-    //   ("a,age", "Age of the user", cxxopts::value<int>())
-    //   ("h,help", "Print usage")
-    // ;
-    //
-    // auto result = options.parse(argc, argv);
-    //
-    // if (result.count("help"))
-    // {
-    //     std::cout << options.help() << std::endl;
-    //     return 0;
-    // }
-    //
-    // if(!result.count("name") || !result.count("kage"))
-    // {
-    //     std::cout << "ERROR: name and age must be specified\n";
-    //     std::cout << options.help() << std::endl;
-    //     return 1;
-    // }
-    //
-    // std::string name = result["name"].as<std::string>();
-    // int age = result["age"].as<int>();
-    //
-    // std::cout << "Name: " << name << "\nAge: " << age << std::endl;
 
+int main(int argc, char *argv[]) {
+    Cli cli(argc, argv);
 
     Quotes quotes;
     std::optional<Quote> quote = quotes.getRandomQuote();
 
+    std::string str_quote = quote.value().GetQuote();
+    std::string str_author = quote.value().GetAuthor();
+
+    int style = cli.handle();
+
     if (quote.has_value()) {
-        std::cout << quote.value().GetQuote() << " -- " << quote.value().GetAuthor() << std::endl;
+        switch (style) {
+            case Style::AUTHOR_AT_END:
+                std::cout << str_quote << " Author: " << termcolor::yellow << str_author << termcolor::reset << std::endl;
+                break;
+            case Style::AUTHOR_AT_END_COLORED:
+                std::cout << str_quote << " " << termcolor::yellow << str_author << termcolor::reset << std::endl;
+            break;
+            case AUTHOR_AT_NEW_LINE_COLORED:
+                std::cout << str_quote  << std::endl;
+                std::cout << "Author: " << termcolor::yellow << str_author << termcolor::reset << std::endl;
+                break;
+            default:
+                std::cout << str_quote << " -- " << str_author << std::endl;
+                break;
+        }
+
+        std::string sentence =
+                "Stop letting people who do so little for you control so much of your mind and emotions.";
     }
+
     return 0;
 }
